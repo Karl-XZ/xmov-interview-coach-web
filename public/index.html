@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3f7fb" />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css?v=20260613-1915" />
+    <title>职面未来 - 数字人 AI 面试模拟助手</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <strong>职面未来</strong>
+          <span>数字人 AI 面试模拟与复盘助手</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="startAvatarBtn" class="primary-button" type="button">启动数字人</button>
+          <span id="statusPill" class="status-pill">待启动</span>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <aside class="setup-panel">
+          <section class="panel-block">
+            <div class="section-title">
+              <span>01</span>
+              <h2>面试配置</h2>
+            </div>
+            <p class="panel-copy">点击启动数字人后，面试官会出现在中间区域。填写简历和目标岗位后，即可生成一场专属模拟面试。</p>
+            <label>
+              <span>目标岗位</span>
+              <select id="jobSelect">
+                <option value="product_manager">产品经理实习生</option>
+                <option value="frontend">前端开发实习生</option>
+                <option value="java_backend">Java 后端开发实习生</option>
+                <option value="algorithm">算法工程师实习生</option>
+                <option value="operations">新媒体运营实习生</option>
+              </select>
+            </label>
+            <div class="split-fields">
+              <label>
+                <span>面试类型</span>
+                <select id="interviewType">
+                  <option>一面</option>
+                  <option>技术面</option>
+                  <option>HR 面</option>
+                  <option>综合面</option>
+                </select>
+              </label>
+              <label>
+                <span>难度</span>
+                <select id="difficulty">
+                  <option>标准</option>
+                  <option>基础</option>
+                  <option>压力</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              <span>简历内容</span>
+              <textarea id="resumeInput" rows="7" placeholder="粘贴你的简历文本，建议包含教育背景、项目经历、实习经历和技能。"></textarea>
+            </label>
+            <label>
+              <span>目标岗位 JD</span>
+              <textarea id="jdInput" rows="5" placeholder="粘贴目标岗位描述，或使用系统内置岗位 JD。"></textarea>
+            </label>
+            <div class="form-row wrap">
+              <button id="sampleBtn" class="ghost-button" type="button">填入示例</button>
+              <button id="planBtn" class="primary-button" type="button">生成面试大纲</button>
+            </div>
+          </section>
+        </aside>
+
+        <section class="stage-panel">
+          <section class="avatar-stage">
+            <div id="avatarMount" class="avatar-mount"></div>
+            <div id="avatarFallback" class="avatar-fallback">
+              <div class="avatar-standby">
+                <strong>面试官待启动</strong>
+                <span>点击右上角按钮后进入数字人面谈现场</span>
+              </div>
+              <div class="voice-rings" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+            <div id="caption" class="caption" hidden></div>
+          </section>
+
+          <section class="question-card live-question-card">
+            <div class="panel-head">
+              <div>
+                <div class="question-meta" id="questionMeta">未开始</div>
+                <h2 id="currentQuestion">请先生成面试大纲</h2>
+              </div>
+              <button id="finishBtn" class="ghost-button small" type="button" disabled>生成报告</button>
+            </div>
+            <p id="questionIntent"></p>
+            <form id="answerForm" class="answer-form">
+              <textarea id="answerInput" rows="4" placeholder="请输入你的回答。建议按背景、任务、行动、结果来组织。" disabled></textarea>
+              <div class="voice-row">
+                <button id="voiceAnswerBtn" class="voice-button" type="button" disabled>语音回答</button>
+                <span id="voiceStatus" class="voice-status">开始面试后可使用语音回答</span>
+              </div>
+              <div class="form-row">
+                <button id="submitAnswerBtn" class="primary-button" type="submit" disabled>提交回答</button>
+              </div>
+            </form>
+          </section>
+        </section>
+
+        <aside class="review-panel">
+          <section class="interview-board">
+            <nav class="tabs" aria-label="面试流程">
+              <button class="tab active" data-view="brief" type="button">大纲</button>
+              <button class="tab" data-view="interview" type="button">记录</button>
+              <button class="tab" data-view="report" type="button">报告</button>
+            </nav>
+
+            <section id="briefView" class="view active" data-view="brief">
+              <div class="empty-state" id="briefEmpty">
+                <h2>先生成一场岗位面试</h2>
+                <p>系统会根据简历和 JD 生成结构化问题，并由数字人面试官逐题提问。</p>
+              </div>
+              <div id="briefContent" class="brief-content" hidden></div>
+            </section>
+
+            <section id="interviewView" class="view" data-view="interview">
+              <div class="transcript-panel">
+                <div class="panel-head">
+                  <h3>面试记录</h3>
+                  <button id="resetInterviewBtn" class="ghost-button small" type="button">重来</button>
+                </div>
+                <div id="transcriptLog" class="transcript-log"></div>
+              </div>
+            </section>
+
+            <section id="reportView" class="view" data-view="report">
+              <div id="reportEmpty" class="empty-state">
+                <h2>完成面试后生成复盘报告</h2>
+                <p>报告会展示总分、分项评分、证据依据、扣分问题、示范回答和下一轮训练计划。</p>
+              </div>
+              <div id="reportContent" class="report-content" hidden></div>
+            </section>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar@latest.js"></script>
+    <script src="app.js?v=20260613-1915"></script>
+  </body>
+</html>

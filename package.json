@@ -1,0 +1,13 @@
+{
+  "name": "xmov-interview-coach",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python app.py",
+    "dev": "python app.py"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
